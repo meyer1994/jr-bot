@@ -79,14 +79,29 @@ def search(message):
     hit = hits[0]
     file = hit['file']
     chat = message.chat.id
-    logger.info('Sending: %s', file)
+    logger.info('Sending %s: %s', hit['type'], file)
     if hit['type'] == 'audio':
-        bot.send_audio(file)
+        bot.send_audio(chat, file)
     else:
         bot.send_voice(chat, file)
     logger.info('Sent: %s', file)
 
     logger.info('Handled /search')
+
+
+@bot.message_handler(commands=['get'])
+def get(message):
+    logger.info('Handling /get')
+    item = message.text[4:].strip()
+    item = audiobot.algolia.get(item)
+
+    chat = message.chat.id
+    if item['type'] == 'audio':
+        bot.send_audio(chat, item['file'])
+    else:
+        bot.send_voice(chat, item['file'])
+
+    logger.info('Handled /get')
 
 
 if __name__ == '__main__':

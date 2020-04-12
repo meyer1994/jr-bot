@@ -36,4 +36,7 @@ def search(text):
 
 def get(item):
     """ Gets item by id """
-    pass
+    logger.info('Getting %s', item)
+    result = index.get_object(item)
+    logger.info('Got %s', item)
+    return result

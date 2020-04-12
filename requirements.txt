@@ -1,0 +1,6 @@
+pydub
+requests
+algoliasearch
+pyTelegramBotAPI
+google-cloud-speech
+google-cloud-storage

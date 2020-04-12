@@ -25,7 +25,7 @@ def ping(message):
     logger.info('Handled /ping')
 
 
-@bot.message_handler(content_types=['voice'])
+@bot.message_handler(content_types=['voice', 'audio'])
 def voice(message):
     """
     Receives the voice/audio messages from Telegram and uploads it to our
@@ -76,10 +76,14 @@ def search(message):
         return
 
     # Results
-    file = hits[0]['file']
+    hit = hits[0]
+    file = hit['file']
     chat = message.chat.id
     logger.info('Sending: %s', file)
-    bot.send_voice(chat, file)
+    if hit['type'] == 'audio':
+        bot.send_audio(file)
+    else:
+        bot.send_voice(chat, file)
     logger.info('Sent: %s', file)
 
     logger.info('Handled /search')

@@ -9,13 +9,15 @@ class TestTranscripts(TestCase):
     def test_constructor(self, algolia):
         """ Creates an algolia client on constructor """
         Transcripts()
-        algolia.Create.assert_called_once_with('user', 'token')
+        # We do not use `with` here because the settings are taken from
+        # environment and may change frequently
+        algolia.create.assert_called_once()
 
     def test_index(self, algolia):
         """ Returns `audio` index """
         transcripts = Transcripts()
         transcripts.index
-        algolia.Create().init_index.assert_called_once_with('audios')
+        algolia.create().init_index.assert_called_once_with('audios')
 
     @patch.object(Transcripts, 'index', new_callable=PropertyMock)
     def test_save(self, index, algolia):

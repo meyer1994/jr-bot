@@ -4,6 +4,8 @@ from google.cloud import firestore
 
 
 class Users(object):
+    COLLECTION = 'users'
+
     logger = logging.getLogger('Users')
 
     def __init__(self):
@@ -13,7 +15,7 @@ class Users(object):
     @property
     def collection(self: str):
         """ Returns `users` collection """
-        return self.client.collection('users')
+        return self.client.collection(self.COLLECTION)
 
     def get(self, user: str):
         """ Gets user data """

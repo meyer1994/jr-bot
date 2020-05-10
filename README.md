@@ -10,7 +10,7 @@ This bot indexes all audio that you send to it and make it searchable by text.
 ### `/ping`
 Will make it answer "Pong!". Mostly used to check if the service is up when developing.
 
-## `/start`
+### `/start`
 Will create an entry to our database containing user configuration. It is automatically called by telegram when first interacting with the bot. Currently, the only information stored is the language. Defaults to `pt-BR`.
 
 ### `/me`

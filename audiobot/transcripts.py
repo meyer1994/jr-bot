@@ -6,7 +6,7 @@ from audiobot.settings import AlgoliaSettings
 
 
 class Transcripts(object):
-    INDEX = 'audios'
+    INDEX = 'audio'
 
     def __init__(self):
         super(Transcripts, self).__init__()

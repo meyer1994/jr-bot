@@ -6,12 +6,15 @@ from audiobot.transcripts import Transcripts
 
 @patch('audiobot.transcripts.SearchClient')
 class TestTranscripts(TestCase):
-    def test_constructor(self, algolia):
+
+    @patch('audiobot.transcripts.AlgoliaSettings')
+    def test_constructor(self, settings, algolia):
         """ Creates an algolia client on constructor """
+        settings().user = 'user'
+        settings().token = 'token'
+
         Transcripts()
-        # We do not use `with` here because the settings are taken from
-        # environment and may change frequently
-        algolia.create.assert_called_once()
+        algolia.create.assert_called_once_with('user', 'token')
 
     def test_index(self, algolia):
         """ Returns `audio` index """

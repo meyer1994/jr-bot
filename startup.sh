@@ -15,16 +15,16 @@ source venv/bin/activate
 # Clone git
 git clone https://github.com/meyer1994/jr-bot.git
 cd jr-bot
-git checkout algolia
+git checkout dev
 
 # Python deps
 pip install -r requirements.txt
 
 # Environment (I could not find a better way to do it)
-export ALGOLIA_USER="" && \
-export ALGOLIA_TOKEN="" && \
-export TELEGRAM_TOKEN="" && \
-export GOOGLE_STORAGE_BUCKET="" && \
+touch .env
+echo 'ALGOLIA_USER=""' >> .env
+echo 'ALGOLIA_TOKEN=""' >> .env
+echo 'TELEGRAM_TOKEN=""' >> .env
 
 # Run
 python3.8 local.py

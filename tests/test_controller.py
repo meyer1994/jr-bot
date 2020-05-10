@@ -83,3 +83,56 @@ class TestControoler(TestCase):
         audio.recognize.assert_called_once_with('any uri', 'pt-BR')
         self.transcripts.save.assert_called_once_with('user', ANY)
         self.bot.reply_to(message, ANY)
+
+    def test_search_no_results(self):
+        """ Searches for audios in our index (no results) """
+        self.transcripts.search.return_value = {'nbHits': 0}
+
+        message = Mock()
+        message.text = 'text'
+        message.chat.id = 'chat'
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.search(message)
+
+        self.transcripts.search.assert_called_once_with('user', 'text')
+        self.bot.send_message.assert_called_once_with('chat', 'No results :(')
+
+    def test_search_with_audio_result(self):
+        """ Searches for audios in our index (with audio results) """
+        data = {
+            'nbHits': 2,
+            'hits': [{'file': 'file1', 'type': 'audio'}]
+        }
+        self.transcripts.search.return_value = data
+
+        message = Mock()
+        message.text = 'text'
+        message.chat.id = 'chat'
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.search(message)
+
+        self.transcripts.search.assert_called_once_with('user', 'text')
+        self.bot.send_audio.assert_called_once_with('chat', 'file1')
+
+    def test_search_with_voice_result(self):
+        """ Searches for audios in our index (with voice results) """
+        data = {
+            'nbHits': 2,
+            'hits': [{'file': 'file1', 'type': 'voice'}]
+        }
+        self.transcripts.search.return_value = data
+
+        message = Mock()
+        message.text = 'text'
+        message.chat.id = 'chat'
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.search(message)
+
+        self.transcripts.search.assert_called_once_with('user', 'text')
+        self.bot.send_voice.assert_called_once_with('chat', 'file1')

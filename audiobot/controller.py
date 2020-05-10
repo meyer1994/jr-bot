@@ -1,4 +1,3 @@
-import uuid
 from audiobot.audio import Audio
 
 
@@ -62,13 +61,7 @@ class Controller(object):
     def search(self, message):
         """ Searches Algolia's index. Returns objects """
         user = message.from_user.id
-        options = {
-            'attributesToHighlight': [],
-            'filters': f'user = {user}',
-            'hitsPerPage': 1
-        }
-        index = self.algolia.init_index('audio')
-        result = index.search(message.text, options)
+        result = self.transcripts.search(user, message.text)
 
         chat = message.chat.id
 

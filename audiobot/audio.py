@@ -1,3 +1,4 @@
+import uuid
 import logging
 import tempfile
 import itertools
@@ -14,11 +15,18 @@ settings = GoogleSettings()
 
 
 class Audio(object):
+    BUCKET = 'audiosbucket'
+
     logger = logging.getLogger('Audio')
 
     def __init__(self, temp):
         super(Audio, self).__init__()
         self.temp = temp
+        self._storage = storage.Client()
+
+    @property
+    def bucket(self):
+        return self._storage.bucket(self.BUCKET)
 
     @staticmethod
     def download(url):
@@ -37,14 +45,13 @@ class Audio(object):
         self.temp = temp
         return self.temp
 
-    def upload(self, key):
-        client = storage.Client()
-        bucket = client.bucket(settings.storage_bucket)
+    def upload(self):
         self.temp.flush()
         self.temp.seek(0)
-        blob = bucket.blob(key)
+        key = str(uuid.uuid4())
+        blob = self.bucket.blob(key)
         blob.upload_from_file(self.temp)
-        return f'gs://{bucket.name}/{key}'
+        return f'gs://{self.bucket.name}/{key}'
 
     @staticmethod
     def recognize(uri, language='pt-BR', hertz=48_000):

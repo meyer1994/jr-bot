@@ -1,3 +1,4 @@
+import re
 from audiobot.audio import Audio
 
 
@@ -76,3 +77,29 @@ class Controller(object):
             self.bot.send_audio(chat, file)
         elif hit['type'] == 'voice':
             self.bot.send_voice(chat, file)
+
+    def me_lang(self, message):
+        text = message.text[8:].strip()
+        user = str(message.from_user.id)
+        chat = message.chat.id
+
+        # No argument, just return the current language
+        if text == '':
+            conf = self.users.get(user)
+            lang = conf.pop('language')
+            message = f'Language: {lang}'
+            self.bot.send_message(chat, message)
+            return
+
+        # Check language format
+        # TODO: check if in some set of languages
+        lang_regex = r'[a-z]{2}-[A-Z]{2}'
+        if re.match(lang_regex, text) is None:
+            self.bot.send_message(chat, 'Not a valid language')
+            return
+
+        # Sets new language
+        data = {'language': text}
+        self.users.set(user, data)
+
+        self.bot.send_message(chat, 'Language updated')

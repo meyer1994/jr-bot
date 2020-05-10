@@ -27,10 +27,10 @@ def register(function, **kwargs):
 register(controller.ping, commands=['ping'])
 register(controller.start, commands=['start'])
 register(controller.me, commands=['me'])
+register(controller.me_lang, commands=['me.lang'])
 register(controller.voice, content_types=['voice'])
 register(controller.audio, content_types=['audio'])
 register(controller.search, func=lambda m: True)
-
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)

@@ -136,3 +136,46 @@ class TestControoler(TestCase):
 
         self.transcripts.search.assert_called_once_with('user', 'text')
         self.bot.send_voice.assert_called_once_with('chat', 'file1')
+
+    def test_me_lang_no_args(self):
+        """ Returns the current set language """
+        self.users.get.return_value = {'language': 'pt-BR'}
+
+        message = Mock()
+        message.chat.id = 'chat'
+        message.text = '/me.lang '
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.me_lang(message)
+
+        self.users.get.assert_called_with('user')
+        self.bot.send_message.assert_called_with('chat', 'Language: pt-BR')
+
+    def test_me_lang_invalid_args(self):
+        """ Returns a message when args are invalid """
+        message = Mock()
+        message.chat.id = 'chat'
+        message.text = '/me.lang invalid args'
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.me_lang(message)
+
+        self.bot.send_message\
+            .assert_called_once_with('chat', 'Not a valid language')
+
+    def test_me_lang(self):
+        """ Sets a new language to user """
+        message = Mock()
+        message.chat.id = 'chat'
+        message.text = '/me.lang en-UK'
+        message.from_user.id = 'user'
+
+        controller = Controller(self.bot, self.transcripts, self.users)
+        controller.me_lang(message)
+
+        self.users.set\
+            .assert_called_once_with('user', {'language': 'en-UK'})
+        self.bot.send_message\
+            .assert_called_once_with('chat', 'Language updated')

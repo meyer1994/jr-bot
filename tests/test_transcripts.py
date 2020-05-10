@@ -20,7 +20,7 @@ class TestTranscripts(TestCase):
         """ Returns `audio` index """
         transcripts = Transcripts()
         transcripts.index
-        algolia.create().init_index.assert_called_once_with(Transcripts.INDEX)
+        algolia.create().init_index.assert_called_with(Transcripts.INDEX)
 
     @patch.object(Transcripts, 'index', new_callable=PropertyMock)
     def test_save(self, index, algolia):
@@ -39,7 +39,8 @@ class TestTranscripts(TestCase):
         transcripts.search('user', 'text')
         options = {
             'attributesToHighlight': [],
-            'filters': 'user = user',
-            'hitsPerPage': 1
+            'facets': ['user'],
+            'filters': 'user:user',
+            'hitsPerPage': 1,
         }
         index().search.assert_called_once_with('text', options)

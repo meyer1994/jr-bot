@@ -13,6 +13,7 @@ cache:
 
 addons:
   apt:
+    update: "true"
     packages:
       - "ffmpeg"
 

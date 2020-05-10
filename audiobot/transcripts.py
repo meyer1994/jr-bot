@@ -13,6 +13,13 @@ class Transcripts(object):
         settings = AlgoliaSettings()
         self.client = SearchClient.create(settings.user, settings.token)
 
+        settings = {
+            'indexLanguages': ['en', 'pt', 'es'],
+            'queryLanguages': ['en', 'pt', 'es'],
+            'searchableAttributes': ['text'],
+        }
+        self.index.set_settings(settings)
+
     @property
     def index(self):
         return self.client.init_index(self.INDEX)
@@ -26,7 +33,8 @@ class Transcripts(object):
     def search(self, user: str, text: str):
         options = {
             'attributesToHighlight': [],
-            'filters': f'user = {user}',
-            'hitsPerPage': 1
+            'facets': ['user'],
+            'filters': f'user:{user}',
+            'hitsPerPage': 1,
         }
         return self.index.search(text, options)

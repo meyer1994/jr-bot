@@ -1,9 +1,13 @@
+import logging
+
 import telebot
 
 from audiobot.users import Users
 from audiobot.controller import Controller
 from audiobot.transcripts import Transcripts
 from audiobot.settings import TelegramSettings
+
+logging.basicConfig(level=logging.INFO)
 
 settings = TelegramSettings()
 
@@ -23,7 +27,6 @@ def register(function, **kwargs):
 register(controller.ping, commands=['ping'])
 register(controller.start, commands=['start'])
 register(controller.me, commands=['me'])
-register(controller.config, commands=['config'])
 register(controller.voice, content_types=['voice'])
 register(controller.audio, content_types=['audio'])
 register(controller.search, func=lambda m: True)

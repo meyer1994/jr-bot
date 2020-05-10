@@ -20,7 +20,7 @@ class TestTranscripts(TestCase):
         """ Returns `audio` index """
         transcripts = Transcripts()
         transcripts.index
-        algolia.create().init_index.assert_called_once_with('audios')
+        algolia.create().init_index.assert_called_once_with(Transcripts.INDEX)
 
     @patch.object(Transcripts, 'index', new_callable=PropertyMock)
     def test_save(self, index, algolia):

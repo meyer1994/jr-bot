@@ -15,7 +15,7 @@ class TestUsers(TestCase):
         """ Returns `users` collection """
         users = Users()
         users.collection
-        firestore.Client().collection.assert_called_once_with('users')
+        firestore.Client().collection.assert_called_once_with(Users.COLLECTION)
 
     @patch.object(Users, 'collection', new_callable=PropertyMock)
     def test_get(self, collection, firestore):

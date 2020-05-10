@@ -2,9 +2,9 @@ from pydantic import BaseSettings
 
 
 class AlgoliaSettings(BaseSettings):
-    algolia_user: str = 'user'
-    algolia_token: str = 'token'
-    algolia_index: str = 'index'
+    user: str = 'user'
+    token: str = 'token'
+    index: str = 'index'
 
     class Config:
         env_file = '.env'

@@ -1,6 +1,8 @@
 pydub
+pydantic[dotenv]
 requests
 algoliasearch
 pyTelegramBotAPI
 google-cloud-speech
 google-cloud-storage
+google-cloud-firestore

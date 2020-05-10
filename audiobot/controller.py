@@ -1,13 +1,13 @@
-
-import audiobot.audio
+import uuid
+from audiobot.audio import Audio
 
 
 class Controller(object):
-    def __init__(self, bot, algolia, firestore):
+    def __init__(self, bot, transcripts, users):
         super(Controller, self).__init__()
         self.bot = bot
-        self.algolia = algolia
-        self.firestore = firestore
+        self.transcripts = transcripts
+        self.users = users
 
     def ping(self, message):
         chat = message.chat.id
@@ -15,46 +15,49 @@ class Controller(object):
 
     def start(self, message):
         user = str(message.from_user.id)
-        collection = self.firestore.collection('users')
-        document = collection.document(user)
         data = {'language': 'pt-BR'}
-        document.set(data)
+        self.users.set(user, data)
+
+    def me(self, message):
+        user = str(message.from_user.id)
+        data = self.users.get(user)
+        response = (f'{k.title()}: {v}' for k, v in data.items())
+        response = '\n'.join(response)
+        chat = message.chat.id
+        self.bot.send_message(chat, response)
 
     def audio(self, message):
         message.voice = message.audio
         return self.voice(message)
 
     def voice(self, message):
-        user = str(message.from_user.id)
         file = message.voice.file_id
 
-        collection = self.firestore.collection('users')
-        document = collection.document(user)
-        snapshot = document.get(['language'])
-        data = snapshot.to_dict()
-
-        lang = data.pop('language')
+        # Get configuration
+        user = str(message.from_user.id)
+        config = self.users.get(user)
+        language = config.pop('language')
 
         # Process
         url = self.bot.get_file_url(file)
-        temp = audiobot.audio.download(url)
-        temp = audiobot.audio.convert(temp)
-        uri = audiobot.audio.upload(temp, file)
-        results = audiobot.audio.recognize(uri, lang)
+        audio = Audio.download(url)
+        audio.convert(fmt='mp3')
+        uri = audio.upload()
+        results = Audio.recognize(uri, language)
 
-        # Index
+        # Save to algolia
         result = results[0]
         data = {
             'file': file,
             'text': result.transcript,
             'type': message.content_type,
-            'user': message.from_user.id,
-            'language': lang,
+            'language': language,
             'confidence': result.confidence
         }
-        config = {'autoGenerateObjectIDIfNotExist': True}
-        index = self.algolia.init_index('audio')
-        result = index.save_object(data, config)
+        self.transcripts.save(user, data)
+
+        text = f'Audio indexed:\n{result.transcript}'
+        self.bot.reply_to(message, text)
 
     def search(self, message):
         """ Searches Algolia's index. Returns objects """
@@ -69,6 +72,7 @@ class Controller(object):
 
         chat = message.chat.id
 
+        # No results
         if result['nbHits'] < 1:
             return self.bot.send_message(chat, 'No results :(')
 

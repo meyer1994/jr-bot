@@ -32,6 +32,5 @@ class TestUsers(TestCase):
         users = Users()
         data = {'nice': 'data'}
         users.set('user', data)
-        collection.assert_called_once_with()
         collection().document.assert_called_once_with('user')
         collection().document().set.assert_called_once_with(data)

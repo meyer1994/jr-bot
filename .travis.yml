@@ -1,5 +1,5 @@
 os: "linux"
-dist: "bionic
+dist: "bionic"
 
 language: "python"
 python:
@@ -18,6 +18,14 @@ jobs:
 
 install:
   - "pip install -r requirements.txt"
+  - "pip install coverage"
+  - "pip install flake8"
 
 script:
-  - "python -m unittest discover -vb tests"
+  - "python -m compileall -f audiobot/"
+  - "python -m flake8 --statistics audiobot/"
+  - "python -m coverage run --source=audiobot -m unittest discover -vb tests/"
+
+after_success:
+  - "python -m coverage report -m"
+  - "bash <(curl -s https://codecov.io/bash)"

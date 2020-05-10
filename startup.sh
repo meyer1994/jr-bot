@@ -27,4 +27,4 @@ echo 'ALGOLIA_TOKEN=""' >> .env
 echo 'TELEGRAM_TOKEN=""' >> .env
 
 # Run
-python3.8 local.py
+python3.8 main.py

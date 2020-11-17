@@ -23,10 +23,12 @@ class TestAudio(TestCase):
         self.fail()
 
     def test_sha256(self):
-        """ Calculates sha256 of data and seeks stream to start """
+        """ Calculates sha256 of data """
         data = io.BytesIO(b'nice')
         sha256 = audio.sha256(data)
 
+        # Value got using:
+        #   $ echo -n 'nice' | sha256sum
         r = 'e186022d0931afe9fe0690857e32f85e50165e7fbe0966d49609ef1981f920c6'
         self.assertEqual(sha256, r)
         self.assertEqual(data.tell(), 0)

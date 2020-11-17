@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 
 from audiobot import audio
 
+
 class TestAudio(TestCase):
     @patch('audiobot.audio.httpx')
     def test_download(self, httpx):
@@ -18,9 +19,21 @@ class TestAudio(TestCase):
         httpx.get.assert_called_once_with(url)
         response.iter_bytes.assert_called_once_with()
 
-    def test_upload(self):
+    @patch('audiobot.audio.storage')
+    def test_upload(self, storage):
         """ Uploads data to GCP bucket """
-        self.fail()
+        data = io.BytesIO(b'data')
+
+        result = audio.upload(data, 'key')
+
+        self.assertEqual(result, 'gs://bucket/key')
+        self.assertEqual(data.tell(), 0)
+
+        storage.Client.assert_called_once_with()
+        storage.Client().bucket.assert_called_once_with('bucket')
+        storage.Client().bucket().blob.assert_called_once_with('key')
+        storage.Client().bucket().blob().upload_from_file\
+            .assert_called_once_with(data)
 
     def test_sha256(self):
         """ Calculates sha256 of data """

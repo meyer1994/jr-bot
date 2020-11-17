@@ -56,8 +56,22 @@ class TestAudio(TestCase):
         self.assertEqual(data.tell(), 0)
         self.assertEqual(result.tell(), 0)
 
-    def test_index(self):
-        self.fail()
+    @patch('audiobot.audio.SearchClient')
+    def test_index(self, SearchClient):
+        """ Indexes data in Algolia """
+        response = {'objectID': 'id'}
+        index = MagicMock()
+        index.save_object.return_value = response
+        client = MagicMock()
+        client.init_index.return_value = index
+        SearchClient.create.return_value = client
+
+        response = audio.index('key', 'text')
+        self.assertEqual(response, 'id')
+
+        SearchClient.create.assert_called_once_with('user', 'token')
+        SearchClient.create().init_index.assert_called_once_with('index')
+        SearchClient.create().init_index().save_object.assert_called_once()
 
     @patch('audiobot.audio.speech')
     def test_transcribe(self, speech):

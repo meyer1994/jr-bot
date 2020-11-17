@@ -1,79 +1,45 @@
-from unittest import TestCase, mock
-from unittest.mock import patch, PropertyMock
+import io
+from unittest import TestCase
+from unittest.mock import patch, MagicMock
 
-from tests.utils import resource
+from audiobot import audio
 
-from pydub import AudioSegment
-
-from audiobot.audio import Audio
-
-
-@patch('audiobot.audio.storage')
 class TestAudio(TestCase):
-    def test_constructor(self, storage):
-        """ Creates a storage client on constructor """
-        Audio(None)
-        storage.Client.assert_called_once()
+    @patch('audiobot.audio.httpx')
+    def test_download(self, httpx):
+        """ Downloads data to stream """
+        response = MagicMock()
+        response.iter_bytes.return_value = b'abc'.split()
+        httpx.get.return_value = response
 
-    def test_bucket(self, storage):
-        """ Returns `audios` bucket """
-        audio = Audio(None)
-        audio.bucket
-        storage.Client().bucket.assert_called_once_with('audiosbucket')
+        url = 'https://example.org'
+        data = audio.download(url)
 
-    def test_convert(self, storage):
-        """ Converts the passed file to mp3 """
-        with resource('audio.mp3', 'rb') as file:
-            audio = Audio(file)
-            result = audio.convert()
+        httpx.get.assert_called_once_with(url)
+        response.iter_bytes.assert_called_once_with()
 
-        self.assertTrue(result.name.endswith('.mp3'))
-        segment = AudioSegment.from_file(result.name)
-        self.assertEqual(segment.frame_rate, 48_000)
+    def test_upload(self):
+        """ Uploads data to GCP bucket """
+        self.fail()
 
-    @patch('requests.get')
-    def test_download(self, response, storage):
-        """ Downloads a file from telegram """
-        fake_data = [b'1', b'2', b'3']
-        response().iter_content.return_value = iter(fake_data)
+    def test_sha256(self):
+        """ Calculates sha256 of data and seeks stream to start """
+        data = io.BytesIO(b'nice')
+        sha256 = audio.sha256(data)
 
-        result = Audio.download('any url here')
+        r = 'e186022d0931afe9fe0690857e32f85e50165e7fbe0966d49609ef1981f920c6'
+        self.assertEqual(sha256, r)
+        self.assertEqual(data.tell(), 0)
 
-        # Assert mocks were called
-        response.assert_called_with('any url here')
-        response().iter_content.assert_called_once()
+    @patch('audiobot.audio.AudioSegment')
+    def test_convert(self, AudioSegment):
+        """ Calls MP3 converter """
+        data = io.BytesIO(b'data')
+        result = audio.convert(data)
+        AudioSegment.from_file.assert_called_once_with(data, frame_rate=48_000)
+        AudioSegment.from_file().export.assert_called_once()
+        self.assertEqual(data.tell(), 0)
+        self.assertEqual(result.tell(), 0)
 
-        # Assert fake data was written to file
-        result.temp.seek(0)
-        data = result.temp.read()
-        self.assertEqual(data, b'123')
-
-    @patch.object(Audio, 'bucket', new_callable=PropertyMock)
-    def test_upload(self, bucket, storage):
-        """ Uploads to Google's storage bucket """
-        bucket().name = 'audiosbucket'
-
-        with resource('audio.mp3', 'rb') as file:
-            audio = Audio(file)
-            uri = audio.upload()
-
-        self.assertTrue(uri.startswith('gs://audiosbucket'))
-
-        # Assert mocks were called
-        bucket().blob.assert_called_once()
-        bucket().blob().upload_from_file.assert_called_once()
-
-    @mock.patch('audiobot.audio.speech')
-    def test_recognize(self, speech, storage):
-        """ Gets Google's recognition of audio """
-        response = mock.Mock()
-        response.results = []
-        speech().recognize.return_value = response
-
-        result = Audio.recognize('uri')
-
-        # No results because we forced to return no results
-        self.assertListEqual(result, [])
-
-        speech.SpeechClient.assert_called_once_with()
-        speech.SpeechClient().recognize.assert_called_once()
+    def test_index(self):
+        self.fail()

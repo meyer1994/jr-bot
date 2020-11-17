@@ -58,3 +58,25 @@ class TestAudio(TestCase):
 
     def test_index(self):
         self.fail()
+
+    @patch('audiobot.audio.speech')
+    def test_transcribe(self, speech):
+        """ Calls trascription API """
+        alternative = MagicMock()
+        alternative.confidence = 0
+        alternative.transcript = 'nice'
+        result = MagicMock()
+        result.alternatives = [alternative]
+        response = MagicMock()
+        response.results = [result]
+        client = MagicMock()
+        client.recognize.return_value = response
+        speech.SpeechClient.return_value = client
+
+        result = audio.transcribe('key')
+
+        self.assertEqual(result, 'nice')
+
+        speech.SpeechClient.assert_called_once_with()
+        speech.SpeechClient().recognize.assert_called_once()
+

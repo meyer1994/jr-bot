@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from audiobot import index
 
@@ -20,7 +20,7 @@ class TestIndex(TestCase):
     @patch('audiobot.index._index')
     def test_search(self, _index):
         """ Calls Algolia client to search for entry """
-        response = {'hits': [{'objectID':' uri', 'text': 'text'}]}
+        response = {'hits': [{'objectID': 'uri', 'text': 'text'}]}
         _index().search.return_value = response
 
         searched = index.search('text')

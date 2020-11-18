@@ -1,7 +1,5 @@
-import io
 import logging
 
-import httpx
 import telebot
 
 from audiobot import storage, speech, index, settings
@@ -33,7 +31,7 @@ def voice(message):
     uri = storage.upload(audio.data, sha256)
     text = speech.recognize(uri)
 
-    saved = index.save(uri, text)
+    index.save(uri, text)
 
     bot.send_message(message.chat.id, sha256)
     bot.send_message(message.chat.id, text)
@@ -54,4 +52,3 @@ def search(message):
     result = index.search(message.text)
     print(result)
     logger.info('End search')
-

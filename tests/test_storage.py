@@ -1,6 +1,6 @@
 import io
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from audiobot import storage
 
@@ -9,7 +9,7 @@ class TestStorage(TestCase):
     @patch('audiobot.storage._blob')
     def test_download(self, _blob):
         """ Calls GCP client to download blob """
-        data = storage.download('key')
+        storage.download('key')
 
         _blob.assert_called_once_with('key')
         _blob().download_to_file.assert_called_once()

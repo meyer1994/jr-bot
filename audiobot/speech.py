@@ -1,6 +1,3 @@
-import io
-from typing import IO
-
 from google.cloud import speech
 
 

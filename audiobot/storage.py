@@ -1,7 +1,6 @@
 import io
 from typing import IO
 
-import httpx
 from google.cloud import storage
 
 from audiobot import settings

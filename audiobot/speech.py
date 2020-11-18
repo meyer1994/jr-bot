@@ -4,16 +4,18 @@ from typing import IO
 from google.cloud import speech
 
 
-def transcribe(key: str) -> str:
-    audio = speech.types.RecognitionAudio(uri=key)
-    enums = speech.enums.RecognitionConfig.AudioEncoding
+def _client() -> object:
+    return speech.SpeechClient()
 
-    config = speech.types.RecognitionConfig(
-        encoding=enums.ENCODING_UNSPECIFIED,
+
+def recognize(uri: str) -> str:
+    audio = speech.RecognitionAudio(uri=uri)
+
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.ENCODING_UNSPECIFIED,
         sample_rate_hertz=48_000,
         language_code='en',
         model='default'
     )
 
-    client = speech.SpeechClient()
-    return client.recognize(config, audio)
+    return _client().recognize(config, audio)

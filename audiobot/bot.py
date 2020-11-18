@@ -27,11 +27,11 @@ def voice(message):
     url = bot.get_file_url(message.voice.file_id)
 
     audio = Audio.from_url(url)
-    audio = audio.convert()
+    audio = audio.to_mp3()
     sha256 = audio.sha256()
 
-    uri = storage.upload(data, sha256)
-    text = speech.transcribe(uri)
+    uri = storage.upload(audio.data, sha256)
+    text = speech.recognize(uri)
 
     saved = index.save(uri, text)
 
@@ -44,7 +44,7 @@ def voice(message):
 def audio(message):
     logger.info('Start audio')
     message.voice = message.audio
-    voice(messsage)
+    voice(message)
     logger.info('End audio')
 
 

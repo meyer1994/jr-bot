@@ -15,3 +15,13 @@ class Google(BaseSettings):
     class Config:
         env_prefix = 'google_'
         env_file = '.env'
+
+
+class Algolia(BaseSettings):
+    user: str = 'user'
+    token: str = 'token'
+    index: str = 'index'
+
+    class Config:
+        env_prefix = 'algolia_'
+        env_file = '.env'

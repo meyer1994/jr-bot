@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 from audiobot import storage
 
 
-class TestAudio(TestCase):
+class TestStorage(TestCase):
     @patch('audiobot.storage._blob')
     def test_download(self, _blob):
         """ Calls GCP client to download blob """

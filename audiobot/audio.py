@@ -1,5 +1,6 @@
 import io
 import hashlib
+import functools
 from typing import IO
 
 import httpx
@@ -24,7 +25,6 @@ class Audio(object):
             data.write(chunk)
         return Audio(data)
 
-    @property
     def sha256(self) -> str:
         sha256 = hashlib.new('sha256')
         reader = functools.partial(self.data.read, 1024)
@@ -36,4 +36,4 @@ class Audio(object):
         segment = AudioSegment.from_file(self.data, frame_rate=48_000)
         data = io.BytesIO()
         segment.export(data, format='mp3')
-        return Audio(audio)
+        return Audio(data)

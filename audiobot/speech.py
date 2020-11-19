@@ -1,4 +1,9 @@
+import logging
+
 from google.cloud import speech
+
+logger = logging.getLogger('speech')
+logger.setLevel(logging.INFO)
 
 
 def _client() -> object:
@@ -6,6 +11,7 @@ def _client() -> object:
 
 
 def recognize(uri: str) -> str:
+    logger.info('Recognizing: %s', uri)
     audio = speech.RecognitionAudio(uri=uri)
 
     config = speech.RecognitionConfig(
@@ -15,4 +21,6 @@ def recognize(uri: str) -> str:
         model='default'
     )
 
-    return _client().recognize(config, audio)
+    result = _client().recognize(config, audio)
+    logger.info('Recognized: %s', uri)
+    return result

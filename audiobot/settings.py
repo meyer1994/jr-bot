@@ -18,7 +18,7 @@ class Google(BaseSettings):
 
 
 class Algolia(BaseSettings):
-    user: str = 'user'
+    app: str = 'app'
     token: str = 'token'
     index: str = 'index'
 

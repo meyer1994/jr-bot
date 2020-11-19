@@ -1,10 +1,14 @@
 import io
 import hashlib
+import logging
 import functools
 from typing import IO
 
 import httpx
 from pydub import AudioSegment
+
+logger = logging.getLogger('Audio')
+logger.setLevel(logging.INFO)
 
 
 class Audio(object):
@@ -19,21 +23,28 @@ class Audio(object):
 
     @staticmethod
     def from_url(url: str) -> 'Audio':
+        logger.info('Loading from url: %s', url)
         data = io.BytesIO()
         response = httpx.get(url)
         for chunk in response.iter_bytes():
             data.write(chunk)
+        logger.info('Loaded from url: %s', url)
         return Audio(data)
 
     def sha256(self) -> str:
+        logger.info('Calculating sha256')
         sha256 = hashlib.new('sha256')
         reader = functools.partial(self.data.read, 1024)
         for chunk in iter(reader, b''):
             sha256.update(chunk)
-        return sha256.hexdigest()
+        result = sha256.hexdigest()
+        logger.info('Calculated sha256')
+        return result
 
     def to_mp3(self) -> 'Audio':
+        logger.info('Converting to MP3')
         segment = AudioSegment.from_file(self.data, frame_rate=48_000)
         data = io.BytesIO()
         segment.export(data, format='mp3')
+        logger.info('Converted to MP3')
         return Audio(data)

@@ -1,4 +1,5 @@
 import logging
+import itertools
 
 from google.cloud import speech
 
@@ -8,6 +9,13 @@ logger.setLevel(logging.INFO)
 
 def _client() -> object:
     return speech.SpeechClient()
+
+
+def _pick_best(response: object) -> str:
+    alternatives = (r.alternatives for r in response.results)
+    alternatives = itertools.chain(*alternatives)
+    alternatives = sorted(alternatives, key=lambda a: a.confidence)
+    return alternatives[-1].transcript if len(alternatives) > 0 else ''
 
 
 def recognize(uri: str) -> str:
@@ -22,6 +30,6 @@ def recognize(uri: str) -> str:
     )
 
     client = _client()
-    result = client.recognize(config=config, audio=audio)
+    response = client.recognize(config=config, audio=audio)
     logger.info('Recognized: %s', uri)
-    return result
+    return _pick_best(response)

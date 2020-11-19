@@ -42,9 +42,9 @@ class Audio(object):
         return result
 
     def to_mp3(self) -> 'Audio':
-        logger.info('Converting to MP3')
+        logger.info('Converting to mp3')
         segment = AudioSegment.from_file(self.data, frame_rate=48_000)
         data = io.BytesIO()
         segment.export(data, format='mp3')
-        logger.info('Converted to MP3')
+        logger.info('Converted to mp3')
         return Audio(data)

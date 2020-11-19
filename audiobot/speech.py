@@ -21,6 +21,7 @@ def recognize(uri: str) -> str:
         model='default'
     )
 
-    result = _client().recognize(config, audio)
+    client = _client()
+    result = client.recognize(config=config, audio=audio)
     logger.info('Recognized: %s', uri)
     return result

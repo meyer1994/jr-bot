@@ -1,6 +1,6 @@
 algoliasearch==2.4.0
 google-cloud-speech==2.0.1
-google-cloud-storage==1.35.0
+google-cloud-storage==1.35.1
 httpx==0.16.1
 pydantic[dotenv]==1.7.3
 pydub==0.24.1

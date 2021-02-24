@@ -1,7 +1,7 @@
 # Audio bot
 This bot indexes all audio that you send to it and make it searchable by text.
 
-[![Build Status](https://travis-ci.org/meyer1994/jr-bot.svg?branch=dev)](https://travis-ci.org/meyer1994/jr-bot)
+[![build](https://github.com/meyer1994/jr-bot/actions/workflows/build.yml/badge.svg)](https://github.com/meyer1994/jr-bot/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/meyer1994/jr-bot/branch/dev/graph/badge.svg)](https://codecov.io/gh/meyer1994/jr-bot)
 
 

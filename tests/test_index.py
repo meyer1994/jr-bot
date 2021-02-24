@@ -24,4 +24,4 @@ class TestIndex(TestCase):
         _index().search.return_value = response
 
         searched = index.search('text')
-        self.assertListEqual(searched, response['hits'])
+        self.assertDictEqual(searched, response)

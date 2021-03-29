@@ -4,4 +4,4 @@ google-cloud-storage==1.37.0
 httpx==0.17.1
 pydantic[dotenv]==1.8.1
 pydub==0.25.1
-pyTelegramBotAPI==3.7.6
+pyTelegramBotAPI==3.7.7

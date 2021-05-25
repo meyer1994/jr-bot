@@ -1,5 +1,5 @@
 algoliasearch==2.4.0
-google-cloud-speech==2.3.0
+google-cloud-speech==2.4.0
 google-cloud-storage==1.38.0
 httpx==0.18.1
 pydantic[dotenv]==1.8.2

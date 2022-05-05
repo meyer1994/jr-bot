@@ -1,4 +1,4 @@
-algoliasearch==2.6.1
+algoliasearch==2.6.2
 google-cloud-speech==2.13.1
 google-cloud-storage==2.3.0
 httpx==0.22.0

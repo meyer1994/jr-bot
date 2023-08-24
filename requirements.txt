@@ -2,6 +2,6 @@ algoliasearch==2.6.2
 google-cloud-speech==2.17.3
 google-cloud-storage==2.8.0
 httpx==0.23.1
-pydantic[dotenv]==1.10.9
+pydantic[dotenv]==2.3.0
 pydub==0.25.1
 pyTelegramBotAPI==4.10.0
